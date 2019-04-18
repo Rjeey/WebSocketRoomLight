@@ -1,0 +1,77 @@
+<html>
+<head>
+    <title>Rooms list</title>
+</head>
+<body>
+<div class="mypanel"></div>
+<table>
+    <thead>
+    <tr>
+        <th data-field="id">Room Number</th>
+        <th data-field="name">Light</th>
+    </tr>
+    </thead>
+    <tbody id="myList1">
+    </tbody>
+</table>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="/js/sockjs-0.3.4.js"></script>
+<script src="/js/stomp.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script type="text/javascript">
+
+    var url = "/api/rooms";
+
+    $.getJSON(url, function (data) {
+
+        for (var i = 0; i < data.length; i++) {
+            var node = document.createElement("tr")
+            for (var key of ['roomNumber', 'light']) {
+                var tb = document.createElement("td")
+                var a = document.createElement("a")
+                a.href = "/light.html?roomNumber=" + data[i].roomNumber
+
+                if(key == 'light') {
+                    a.innerHTML = (data[i][key] == true)? 'ON': 'OFF';
+                    a.setAttribute("id", data[i]['roomNumber']);
+
+                } else {
+                    a.innerHTML = data[i][key]
+                }
+                tb.appendChild(a)
+                node.appendChild(tb)
+            }
+            document.getElementById("myList1").appendChild(node);
+        }
+
+    });
+
+</script>
+<script type="text/javascript">
+    var stompClient = null;
+
+    connect();
+
+    function connect() {
+        var socket = new SockJS('/rooms');
+        stompClient = Stomp.over(socket);
+        stompClient.connect({}, function (frame) {
+            console.log('Connected: ' + frame);
+            stompClient.subscribe('/topic/messages', function (messageOutput) {
+                showMessageOutput(JSON.parse(messageOutput.body));
+            });
+        });
+    }
+
+    function showMessageOutput(messageOutput) {
+            setLight(messageOutput);
+    }
+
+    function setLight(messageOutput) {
+        document.getElementById(messageOutput.roomNumber).value = messageOutput.light ? 'ON' : 'OFF';
+        document.getElementById(messageOutput.roomNumber).innerHTML = messageOutput.light ? 'ON' : 'OFF';
+        $('#response').html('');
+    }
+</script>
+</body>
+</html>

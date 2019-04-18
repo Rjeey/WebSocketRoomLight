@@ -1,0 +1,104 @@
+<html>
+<head>
+    <title>Light</title>
+</head>
+<body>
+<div class="mypanel"></div>
+<div>
+    <input type="button" value="back" onclick="document.location = './'">
+    <br/>
+    <div>
+    </div>
+    <br/>
+    <div id="conversationDiv">
+        <h1>Room</h1>
+        <h1 id="roomNumber"></h1>
+        <select id="light">
+            <option value="true">turn on</option>
+            <option value="false">turn off</option>
+        </select>
+        <button id="sendMessage" onclick="sendMessage();">Send</button>
+        <p id="response"></p>
+    </div>
+    <h1>Light:</h1>
+    <h1 id="turn"></h1>
+</div>
+<script src="/js/sockjs-0.3.4.js"></script>
+<script src="/js/stomp.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script type="text/javascript">
+    var stompClient = null;
+
+    var href = window.location.href;
+    var CurrentRoomNumber = parse_query_string(href.split("?")[1]).roomNumber;
+
+    document.getElementById('roomNumber').innerHTML = CurrentRoomNumber;
+    document.getElementById('roomNumber').value = CurrentRoomNumber;
+
+
+    var url = "/api/rooms/" + CurrentRoomNumber;
+
+
+    $.getJSON(url, function (data) {
+        var light = `${data.light}`;
+        document.getElementById('turn').innerHTML = (light === "true") ? 'ON' : 'OFF';
+    });
+
+
+    connect();
+
+    function connect() {
+        var socket = new SockJS('/rooms');
+        stompClient = Stomp.over(socket);
+        stompClient.connect({}, function (frame) {
+            console.log('Connected: ' + frame);
+            stompClient.subscribe('/topic/messages', function (messageOutput) {
+                showMessageOutput(JSON.parse(messageOutput.body));
+            });
+        });
+    }
+
+
+    function sendMessage() {
+        var roomNumber = document.getElementById('roomNumber').value;
+        var light = document.getElementById('light').value;
+        stompClient.send("/app/rooms", {},
+            JSON.stringify({'roomNumber': roomNumber, 'light': light}));
+    }
+
+    function showMessageOutput(messageOutput) {
+        var response = document.getElementById('response');
+        var p = document.createElement('p');
+        p.style.wordWrap = 'break-word';
+        if (messageOutput.roomNumber == CurrentRoomNumber) {
+            setLight(messageOutput.light);
+        }
+    }
+
+    function setLight(light) {
+        $('#turn').html(light ? 'ON' : 'OFF');
+        $('#response').html('');
+    }
+
+    function parse_query_string(query) {
+        var vars = query.split("&");
+        var query_string = {};
+        for (var i = 0; i < vars.length; i++) {
+            var pair = vars[i].split("=");
+            // If first entry with this name
+            if (typeof query_string[pair[0]] === "undefined") {
+                query_string[pair[0]] = decodeURIComponent(pair[1]);
+                // If second entry with this name
+            } else if (typeof query_string[pair[0]] === "string") {
+                var arr = [query_string[pair[0]], decodeURIComponent(pair[1])];
+                query_string[pair[0]] = arr;
+                // If third or later entry with this name
+            } else {
+                query_string[pair[0]].push(decodeURIComponent(pair[1]));
+            }
+        }
+        return query_string;
+    }
+</script>
+</body>
+</html>
