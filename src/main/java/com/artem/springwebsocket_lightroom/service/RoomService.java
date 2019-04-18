@@ -11,11 +11,4 @@ public interface RoomService {
     Room getRoomById(Integer id);
 
     void save(Room room);
-
-    void delete(Integer id);
-
-    void turnLightOn(Integer id);
-
-    void turnLightOff(Integer id);
-
 }

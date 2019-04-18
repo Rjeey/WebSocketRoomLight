@@ -31,24 +31,4 @@ public class RoomServiceImpl implements RoomService {
     public void save(Room room) {
         roomRepository.save(room);
     }
-
-    @Override
-    public void delete(Integer id) {
-        roomRepository.delete(id);
-    }
-
-    @Override
-    public void turnLightOn(Integer id) {
-        Room room = roomRepository.findOne(id);
-        room.setLightOn();
-        roomRepository.save(room);
-    }
-
-    @Override
-    public void turnLightOff(Integer id) {
-
-        Room room = roomRepository.findOne(id);
-        room.setLightOff();
-        roomRepository.save(room);
-    }
 }

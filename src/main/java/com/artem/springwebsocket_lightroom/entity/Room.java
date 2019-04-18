@@ -35,12 +35,4 @@ public class Room {
     public void setLight(Boolean light) {
         this.light = light;
     }
-
-    public void setLightOn() {
-        setLight(true);
-    }
-
-    public void setLightOff() {
-        setLight(false);
-    }
 }

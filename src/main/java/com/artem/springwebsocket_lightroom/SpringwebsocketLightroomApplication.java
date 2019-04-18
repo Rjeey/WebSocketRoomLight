@@ -7,14 +7,9 @@ import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.context.ApplicationContext;
 
 @SpringBootApplication
-public class SpringwebsocketLightroomApplication  extends SpringBootServletInitializer {
+public class SpringwebsocketLightroomApplication   {
 
     public static void main(String[] args) {
-        ApplicationContext ctx = SpringApplication.run(SpringwebsocketLightroomApplication.class, args);
-    }
-
-    @Override
-    protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-        return application.sources(SpringwebsocketLightroomApplication.class);
+       SpringApplication.run(SpringwebsocketLightroomApplication.class, args);
     }
 }
