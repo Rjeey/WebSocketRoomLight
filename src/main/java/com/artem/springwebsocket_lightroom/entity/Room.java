@@ -11,6 +11,7 @@ public class Room {
     private int id;
     @Column
     private Boolean light;
+    private Country country;
 
     public Room(int id, Boolean light) {
         this.light = light;
