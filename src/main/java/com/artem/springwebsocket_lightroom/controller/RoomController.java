@@ -23,9 +23,7 @@ public class RoomController {
 
     @GetMapping("/api/rooms")
     public List<Room> getAllRooms() {
-        List<Room> roomList = roomService.findAll();
-
-        return roomList;
+        return roomService.findAll();
     }
 
     @GetMapping("/api/rooms/{roomNumber}")

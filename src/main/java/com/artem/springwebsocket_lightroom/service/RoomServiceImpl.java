@@ -12,19 +12,19 @@ public class RoomServiceImpl implements RoomService {
 
     private final RoomRepository roomRepository;
 
-    @Autowired
+//    @Autowired
     public RoomServiceImpl(RoomRepository roomRepository) {
         this.roomRepository = roomRepository;
     }
 
     @Override
     public List<Room> findAll() {
-        return (List<Room>) roomRepository.findAll();
+        return roomRepository.findAll();
     }
 
     @Override
     public Room getRoomById(Integer id) {
-        return roomRepository.findOne(id);
+        return roomRepository.findById(id).orElse(new Room());
     }
 
     @Override

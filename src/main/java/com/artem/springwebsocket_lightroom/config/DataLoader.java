@@ -12,7 +12,7 @@ public class DataLoader implements ApplicationRunner {
 
     private RoomRepository roomRepository;
 
-    @Autowired
+//    @Autowired
     public DataLoader(RoomRepository roomRepository) {
         this.roomRepository = roomRepository;
     }
